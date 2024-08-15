@@ -125,7 +125,7 @@ public class WifiPlugin extends BaseDingPlugin {
 
         WifiInfo wifiInfo = (WifiInfo) XposedHelpers.newInstance(WifiInfo.class);
 
-        XposedHelpers.setIntField(wifiInfo, "mNetworkId", 68); // MAX_RSSI
+        XposedHelpers.setIntField(wifiInfo, "1", 68); // MAX_RSSI
         XposedHelpers.setObjectField(wifiInfo, "mSupplicantState", SupplicantState.COMPLETED);
         XposedHelpers.setObjectField(wifiInfo, "mBSSID", bssId);
         XposedHelpers.setObjectField(wifiInfo, "mMacAddress", macAddress);

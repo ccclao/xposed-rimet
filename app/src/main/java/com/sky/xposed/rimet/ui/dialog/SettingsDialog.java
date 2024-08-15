@@ -33,6 +33,7 @@ import com.sky.xposed.rimet.BuildConfig;
 import com.sky.xposed.rimet.XConstant;
 import com.sky.xposed.rimet.data.M;
 import com.sky.xposed.rimet.data.model.LocationModel;
+import com.sky.xposed.rimet.data.model.PictureModel;
 import com.sky.xposed.rimet.data.model.StationModel;
 import com.sky.xposed.rimet.data.model.WifiModel;
 import com.sky.xposed.rimet.ui.activity.AnalysisActivity;
@@ -65,6 +66,7 @@ public class SettingsDialog extends BasePluginDialog {
     private EditTextItemView sivSettingsLocation;
     private EditTextItemView sivSettingsWifi;
     private EditTextItemView sivSettingsStation;
+    private EditTextItemView sivSettingsPicture;
 
     private EditTextItemView settingsAntiDetection;
 
@@ -232,6 +234,43 @@ public class SettingsDialog extends BasePluginDialog {
         sivSettingsStation.trackBind(XConstant.Key.STATION_INFO, "");
         sivSettingsStation.addToFrame(stationGroup);
 
+        /*****************   照片   ****************/
+        GroupItemView pictureGroup = new GroupItemView(getContext());
+        pictureGroup.setVisibility(View.GONE);
+
+        XViewUtil.newSwitchItemView(getContext(), "照片替换", "开启时会替换拍照信息")
+                .trackBind(XConstant.Key.ENABLE_VIRTUAL_PICTURE, Boolean.FALSE, pictureGroup)
+                .addToFrame(frameView);
+
+        pictureGroup.addToFrame(frameView);
+
+        sivSettingsPicture = new EditTextItemView(getContext(), new UAttributeSet.Build()
+                .putInt(UIAttribute.EditTextItem.style, XEditItemView.Style.MULTI_LINE)
+                .build());
+        sivSettingsPicture.setName("照片信息");
+        sivSettingsPicture.setExtendHint("设置照片信息");
+        sivSettingsPicture.setOnItemClickListener(view -> {
+
+            // 记录最后的结果,并关闭当前开关(自己获取信息不需要Hook)
+            final boolean lastValue =
+                    mPreferences.getBoolean(XConstant.Key.ENABLE_VIRTUAL_PICTURE);
+            mPreferences.putBoolean(XConstant.Key.ENABLE_VIRTUAL_PICTURE, false);
+
+            PictureDialog dialog = new PictureDialog();
+            dialog.show(getActivity(), (resultCode, data) -> {
+
+                mPreferences.putBoolean(XConstant.Key.ENABLE_VIRTUAL_PICTURE, lastValue);
+
+                if (Activity.RESULT_OK == resultCode) {
+                    // 保存选择的照片信息
+                    savePictureInfo((PictureModel) data.getSerializable(XConstant.Key.DATA));
+                }
+            });
+        });
+        sivSettingsPicture.trackBind(XConstant.Key.PICTURE_INFO, "");
+        sivSettingsPicture.addToFrame(pictureGroup);
+
+
         /*****************   安全   ****************/
         XViewUtil.newSortItemView(getContext(), "安全")
                 .addToFrame(frameView);
@@ -385,6 +424,27 @@ public class SettingsDialog extends BasePluginDialog {
 
         // 设置UI信息
         sivSettingsWifi.setExtend(model.getDesc());
+    }
+
+    /**
+     * 保存照片信息
+     *
+     * @param model
+     */
+    private void savePictureInfo(PictureModel model) {
+
+        if (model == null) return;
+
+        mPreferences.putString(XConstant.Key.PICTURE_INFO, model.getName());
+        mPreferences.putString(XConstant.Key.PICTURE_URL, model.getFilePath());
+//        mPreferences.putInt(XConstant.Key.WIFI_STATE, model.getState());
+//        mPreferences.putString(XConstant.Key.WIFI_SS_ID, model.getSsId());
+//        mPreferences.putString(XConstant.Key.WIFI_BSS_ID, model.getBssId());
+//        mPreferences.putString(XConstant.Key.WIFI_MAC_ADDRESS, model.getMacAddress());
+//        mPreferences.putString(XConstant.Key.WIFI_SCAN_RESULT, GsonUtil.toJson(model.getScanResults()));
+
+        // 设置UI信息
+        sivSettingsPicture.setExtend(model.getTime());
     }
 
     @Override

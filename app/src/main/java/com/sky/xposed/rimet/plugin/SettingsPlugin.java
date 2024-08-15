@@ -47,11 +47,13 @@ public class SettingsPlugin extends BaseDingPlugin {
     public void hook() {
         Alog.d(this.getClass().getName(), " Loading and init pugin....");
         findMethod(
-                "com.alibaba.android.user.settings.activity.NewSettingActivity",
+                "com.alibaba.android.rimet.biz.home.activity.HomeActivity",
                 "onCreate",
                 Bundle.class)
                 .after(param -> onHandlerSettings((Activity) param.thisObject));
 
+        //com.alibaba.android.rimet.biz.home.activity.HomeActivity
+        //com.alibaba.android.rimet.biz.home.v2.activity.HomeActivityV2
         findMethod(
                 "com.alibaba.android.user.settings.activity.UserSettingsActivity",
                 "onCreate",
@@ -72,7 +74,7 @@ public class SettingsPlugin extends BaseDingPlugin {
         SimpleItemView itemView = new SimpleItemView(activity);
         itemView.setMinimumHeight(DisplayUtil.DIP_55);
         itemView.getNameView().setTextSize(16);
-        itemView.setName("钉钉助手");
+        itemView.setName("打工人助手");
         itemView.setExtend("v" + BuildConfig.VERSION_NAME);
         itemView.setOnClickListener(v -> {
             // 打开设置

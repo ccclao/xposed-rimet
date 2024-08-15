@@ -66,6 +66,7 @@ public class Main implements IXposedHookLoadPackage {
         XposedPlus.setDefaultInstance(new XposedPlus.Builder(lpParam)
                 .throwableCallback(new ThrowableAdapter())
                 .build());
+
         Alog.i(this.getClass().getName(), String.format("Launch pacakage=%s processName=%s",lpParam.packageName,lpParam.processName));
 
         try {

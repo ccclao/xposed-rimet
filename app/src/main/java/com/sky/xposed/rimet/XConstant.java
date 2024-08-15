@@ -124,5 +124,13 @@ public interface XConstant {
         String DEVICE_BRAND = "device_brand";
         String DEVICE_HARDWARE = "device_hardware";
 
+        /******  照片  ******/
+
+        String ENABLE_VIRTUAL_PICTURE = "enable_virtual_picture";
+
+        String PICTURE_INFO = "picture_info";
+
+        String PICTURE_URL = "picture_url";
+
     }
 }
